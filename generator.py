@@ -5,7 +5,7 @@ from skimage.transform import resize
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
-    def __init__(self, list_IDs, labels, batch_size=32, dim=(224,224), n_channels=3,
+    def __init__(self, list_IDs, labels, path,batch_size=32, dim=(224,224), n_channels=3,
                  n_classes=1, shuffle=True):
         'Initialization'
         self.dim = dim
@@ -15,7 +15,9 @@ class DataGenerator(keras.utils.Sequence):
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.shuffle = shuffle
+        self.path = path
         self.on_epoch_end()
+        
 
     def __len__(self):
         'Denotes the number of batches per epoch'
@@ -49,10 +51,10 @@ class DataGenerator(keras.utils.Sequence):
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            image = Image.open('./datas/clean/' + ID + '.png')
+            image = Image.open(self.path + ID)
             image_array = np.asarray(image.convert("RGB"))
             image_array = image_array / 255.
-            image_array = resize(image_array, (224, 224), mode= 'constant')
+            image_array = resize(image_array, (224, 224), mode= 'constant', anti_aliasing=True)
             X[i,] = image_array
 
             # Store class
